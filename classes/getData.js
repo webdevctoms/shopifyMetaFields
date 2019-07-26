@@ -33,7 +33,7 @@ GetData.prototype.logger = function(parsedBody){
 		return parsedBody.metafields;
 	}
 	else{
-		return 'none';
+		return [];
 	}
 };
 
