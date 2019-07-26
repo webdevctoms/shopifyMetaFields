@@ -1,37 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const {checkKey} = require("../tools/checkKey");
-const {Metafield} = require('../models/metafield.js');
+const {Metafield} = require('../models/metafield');
+const {GetData} = require('../classes/getData');
+const {URLUS,USERK,USERP} = require('../config');
 
 //copy data from CAD site
 router.get("/copy",checkKey,(req,res) =>{
+	const fields = ['id','title','sku'];
+	const url = URLUS + '/products.json?limit=250&fields=id,title,variants';
+	const getData = new GetData(url,USERK,USERP,fields);
+	return getData.getData([],1)
 
-	return Metafield.create({
-		product_id:'123',
-		product_title:'test',
-		sku:'123-test',
-		metafields:[
-			{
-				namespace:'name',
-				key:'the key',
-				value:"[{\"sku\":\"90004-6.30\",\"quantity\":\"2\",\"locked\":\"false\"}]",
-				value_type:"json_string",
-				owner_id:'123'
-			},
-			{
-				namespace:'name2',
-				key:'the key 2',
-				value:"some data",
-				value_type:"string",
-				owner_id:'123'
-			}
-		]
-	})
-
-	.then(message => {
+	.then(productData => {
+		console.log('================Product Data Length: ',productData.length);
 		return res.json({
 			status:200,
-			data:message
+			data:productData
 		});
 	})
 
