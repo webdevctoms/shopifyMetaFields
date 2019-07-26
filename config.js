@@ -1,6 +1,9 @@
 exports.PORT = process.env.PORT || 8000;
 exports.CKEY = process.env.CKEY;
 exports.URLUS = process.env.URLUS;
+exports.URLCAD = process.env.URLCAD;
 exports.USERK = process.env.USERK;
 exports.USERP = process.env.USERP;
+exports.USERKC = process.env.USERK;
+exports.USERPC = process.env.USERP;
 exports.DATABASE_URL = process.env.DATABASE_URL;
