@@ -13,25 +13,43 @@ GetData.prototype.setFields = function(product){
 	for(let i = 0;i < this.fields.length;i++){
 		//only capture data from first variant
 		let field = this.fields[i];
-		if(!product[field]){
+		if(!product[field] && product.variants){
 
 			newObject[field] = product.variants[0][field];
 		}
 		else{
 			newObject[field] = product[field];
 		}
-		
 	}
 
 	return newObject;
-}
+};
 
-GetData.prototype.getData = function(dataArray,page) {
+GetData.prototype.logger = function(parsedBody){
+	if(parsedBody.products){
+		return parsedBody.products;
+	}
+	else if(parsedBody.metafields){
+		return parsedBody.metafields;
+	}
+	else{
+		return 'none';
+	}
+};
+
+GetData.prototype.getData = function(dataArray,page,url) {
 	if(dataArray === undefined){
 		dataArray = [];
 	}
 	let promise = new Promise((resolve,reject) => {
-		let newUrl = this.url;
+		let newUrl;
+		if(url === undefined){
+			newUrl = this.url;
+		}
+		else{
+			newUrl = url
+		}
+
 		if(page !== undefined){
 			newUrl += "&page=" + page;
 		}
@@ -47,17 +65,18 @@ GetData.prototype.getData = function(dataArray,page) {
 		request(options,function(error,response,body){
 			
 			let parsedBody = JSON.parse(body);
-			console.log("===============Got data: ",parsedBody.products.length);
-			if(parsedBody.products.length !== 0){
+			let log = this.logger(parsedBody);
+			console.log("===============Got data: ",log.length);
+			if(log.length !== 0){
 				//possibly just push data straight into dataArray?
-				for(let i = 0;i < parsedBody.products.length;i++){
-					let currentProduct = parsedBody.products[i];
+				for(let i = 0;i < log.length;i++){
+					let currentProduct = log[i];
 					let currentObject = this.setFields(currentProduct);
 					//console.log(currentObject.title);
 					dataArray.push(currentObject);
 				}
 				//let lastId = parsedBody.products[parsedBody.products.length - 1].id;
-				resolve(this.getData(dataArray,page + 1));
+				resolve(this.getData(dataArray,page + 1,url));
 			}
 			else{
 				
