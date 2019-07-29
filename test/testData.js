@@ -23,7 +23,7 @@ describe('Test Metafield Data',function(){
 			expect(1+1).to.equal(2);
 			done();
 		});
-
+		/*
 		it('should have matching data',function(){
 			this.timeout(900000);
 			const fields = ['id','title','sku'];
@@ -42,7 +42,7 @@ describe('Test Metafield Data',function(){
 			})
 
 			.then(metafieldData => {
-				return compareMetafields(metafieldData,0,[])
+				//return compareMetafields(metafieldData,0,[])
 			})
 
 			.then(results => {
@@ -54,5 +54,45 @@ describe('Test Metafield Data',function(){
 				console.log('Error testing metafield data: ',err);
 			});
 		});
+		*/
+	
+		it('should have matching data',function(){
+			this.timeout(900000);
+			const fields = ['id','title','sku'];
+			const url = URLCAD + 'products.json?limit=250&fields=id,title,variants';
+			const getData = new GetData(url,USERKC,USERPC,fields);
+
+			return getData.getData([],1)
+
+			.then(productData => {
+				console.log('================Product Data Length: ',productData.length);
+				const metafieldUrl = URLCAD + 'products'
+				const metafields = ['namespace','key','value','value_type','owner_id'];
+				const halfIndex = Math.round(productData.length / 2);
+				const halfData1 = productData.slice(0,halfIndex);
+				const halfData2 = productData.slice(halfIndex - 1,productData.length);
+				const getMeta1 = new GetMetafields(halfData1,metafieldUrl,USERKC,USERPC,metafields);
+				const getMeta2 = new GetMetafields(halfData2,metafieldUrl,USERKC,USERPC,metafields);
+
+				return Promise.all([getMeta1.getMetafields([],0),getMeta2.getMetafields([],0)])
+			})
+
+			.then(metafieldData => {
+				console.log('metafieldData length: ',metafieldData.length);
+				let combinedData = [].concat(metafieldData[0],metafieldData[1]);
+				console.log('combinedData length: ',combinedData.length);
+				return compareMetafields(combinedData,0,[])
+			})
+
+			.then(results => {
+				console.log("=========================results from compare prices: ",results, results.length);
+				expect(results).to.have.lengthOf(0);
+			})
+
+			.catch(err => {
+				console.log('Error testing metafield data: ',err);
+			});
+		});
+		
 	});
 });
