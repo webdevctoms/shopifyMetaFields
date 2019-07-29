@@ -4,8 +4,8 @@ const {checkKey} = require("../tools/checkKey");
 const {Metafield} = require('../models/metafield');
 const {GetData} = require('../classes/getData');
 const {SaveDB} = require('../classes/saveDB');
-const {GetMetafields} = require('../classes/getMetafields');
-const {URLCAD,USERKC,USERPC} = require('../config');
+const {SaveToShopify} = require('../classes/saveShopify');
+const {URLCAD,URLUS,USERKC,USERPC,USERK,USERP} = require('../config');
 
 //copy data from CAD site
 router.get("/copy",checkKey,(req,res) =>{
@@ -42,6 +42,29 @@ router.get("/copy",checkKey,(req,res) =>{
 
 	.catch(err=>{
 		console.log("Error saving copy data: ",err);
+		return res.json({
+			status:501,
+			data:err
+		});
+	});
+});
+
+router.get("/saveBackup",checkKey,(req,res) =>{
+	const url = URLUS
+	const saveShopify = new SaveToShopify([{product_id : '2063113093213'}],url,USERK,USERP);
+
+	return saveShopify.saveData(0)
+
+	.then(data => {
+		return res.json({
+			status:501,
+			data:data
+		});
+	})
+
+
+	.catch(err=>{
+		console.log("Error saving to shopify: ",err);
 		return res.json({
 			status:501,
 			data:err
