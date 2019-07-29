@@ -4,6 +4,7 @@ const {checkKey} = require("../tools/checkKey");
 const {Metafield} = require('../models/metafield');
 const {GetData} = require('../classes/getData');
 const {SaveDB} = require('../classes/saveDB');
+const {GetMetafields} = require('../classes/getMetafields');
 const {SaveToShopify} = require('../classes/saveShopify');
 const {URLCAD,URLUS,USERKC,USERPC,USERK,USERP} = require('../config');
 
@@ -61,7 +62,6 @@ router.get("/saveBackup",checkKey,(req,res) =>{
 			data:data
 		});
 	})
-
 
 	.catch(err=>{
 		console.log("Error saving to shopify: ",err);

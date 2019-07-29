@@ -23,7 +23,7 @@ SaveDB.prototype.save = function(productIndex) {
 				console.log("===========Error saving products: ",productIndex,this.productData[productIndex].title);
 				console.log(err);
 				if(err.errmsg.includes("E11000")){
-					resolve(this.saveData(productIndex + 1));
+					resolve(this.save(productIndex + 1));
 				}
 				else{
 					reject(err);

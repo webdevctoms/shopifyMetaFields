@@ -14,7 +14,9 @@ GetMetafields.prototype.getMetafields = function(results,productIndex) {
 	let promise = new Promise((resolve,reject) => {
 		if(productIndex < this.productData.length){
 			results.push(this.productData[productIndex]);
-			let newUrl = this.buildUrl(this.productData[productIndex].id);
+			//need this to use this class for testing
+			let productId = this.productData[productIndex].id ? this.productData[productIndex].id : this.productData[productIndex].product_id;
+			let newUrl = this.buildUrl(productId);
 			console.log('=============get metafields index: ',productIndex,this.productData.length);
 			return this.dataCapture.getData([],1,newUrl)
 
